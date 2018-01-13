@@ -2,16 +2,20 @@ package rest.services.impl;
 
 import com.flexionmobile.codingchallenge.integration.Purchase;
 
+import java.util.logging.Logger;
+
 public class PurchaseImpl implements Purchase {
+    private static final Logger LOGGER = Logger.getLogger(PurchaseImpl.class.getName());
+
     public String getId() {
-        return null;
+        return BillingIntegrationServicesImpl.ID;
     }
 
     public boolean getConsumed() {
-        return false;
+        return BillingIntegrationServicesImpl.isConsumed;
     }
 
     public String getItemId() {
-        return null;
+        return BillingIntegrationServicesImpl.itemId;
     }
 }
