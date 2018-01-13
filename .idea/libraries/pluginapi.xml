@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/../pluginapi.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../pluginapi.jar!/" />
+    </SOURCES>
   </library>
 </component>
