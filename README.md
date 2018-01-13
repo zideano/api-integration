@@ -1,9 +1,8 @@
 # flexion-java
-Create a java RESTFul implementation of an integration interface, which separates billing logic for different APP Stores: 
-Google Play, Apple Store etc. 
+Create a RESTFul Java implementation for a billing integration interface, which separates the billing logic for different Android APP Stores: Google Play, Apple Store etc. 
 
-This billing integration interface implementation will nicely separate the billing logic from the developer's code. 
-Our implementation will connect to the Flexion platform, provides the three RESTFul Web Services functionalities:
+The billing integration interface implementation will nicely separate the billing logic from the developer's code. 
+Our implementation will connect to the Flexion platform, providing these three RESTFul Web Services functionalities:
 
 1. Buy
 2. Consume
