@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pluginapi">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../pluginapi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
