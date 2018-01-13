@@ -1,10 +1,15 @@
 package rest.pojo;
 
-public class GetPurchases {
+import java.io.Serializable;
+
+public class GetPurchases implements Serializable {
     private String developerId;
 
     public GetPurchases(String developerId) {
         this.developerId = developerId;
+    }
+
+    public GetPurchases() {
     }
 
     public String getDeveloperId() {
@@ -13,5 +18,12 @@ public class GetPurchases {
 
     public void setDeveloperId(String developerId) {
         this.developerId = developerId;
+    }
+
+    @Override
+    public String toString() {
+        return "GetPurchases{" +
+                "developerId='" + developerId + '\'' +
+                '}';
     }
 }
