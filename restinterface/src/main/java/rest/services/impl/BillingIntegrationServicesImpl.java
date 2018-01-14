@@ -6,6 +6,7 @@ import com.flexionmobile.codingchallenge.integration.Purchase;
 import rest.enums.HttpResponseCode;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -26,11 +27,11 @@ public class BillingIntegrationServicesImpl implements Integration {
 
     private String webAddress = "http://sandbox.flexionmobile.com/javachallenge/rest/developer/";
 
-    public static boolean isConsumed = false;
-    public static String devID;
-    public static String itemId;
+    private static boolean isConsumed = false;
+    private static String devID;
+    private static String itemId;
 
-    private Purchase purchase;
+    private PurchaseImpl purchase;
     private List<Purchase> purchaseList;
     private ObjectMapper objectMapper;
 
@@ -43,21 +44,22 @@ public class BillingIntegrationServicesImpl implements Integration {
         itemId = s;
 
         try {
-
             // Get a connection object and set default resource parameters
             url = new URL(webAddress + devID + "/" + "buy" + "/" + itemId);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
             connection.setRequestMethod(POST);
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
-            // Check that a connection have been created
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-                throw new RuntimeException("Connection failed: " + connection.getResponseCode());
-            }
+            // Initiate post request
+            connection.setDoOutput(true);
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.writeBytes(devID + "/" + "buy" + "/" + itemId);
+            writer.flush();
+            writer.close();
 
             if (connection.getResponseCode() == HttpResponseCode.ERROR.getResponse())  {
-                LOGGER.log(Level.INFO, connection.getResponseMessage());
+                LOGGER.log(Level.INFO, "Connection error: " + connection.getResponseMessage());
             } else if (connection.getResponseCode() == HttpResponseCode.SUCCESS.getResponse()) {
                 LOGGER.info("Connection successful: " + connection.getResponseCode());
             }
@@ -71,6 +73,8 @@ public class BillingIntegrationServicesImpl implements Integration {
 
             while ((result = bufferedReader.readLine()) != null) {
                 System.out.println(result);
+
+                purchase = objectMapper.readValue(result, PurchaseImpl.class);
             }
             //  Disconnect???
             connection.disconnect();
@@ -78,7 +82,7 @@ public class BillingIntegrationServicesImpl implements Integration {
             LOGGER.log(Level.SEVERE,"URL address format incorrect.");
             e.printStackTrace();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed HTTP connection.");
+            LOGGER.log(Level.SEVERE, "Miscellaneous.");
             e.printStackTrace();
         }
 
