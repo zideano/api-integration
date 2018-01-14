@@ -8,7 +8,7 @@ public class PurchaseImpl implements Purchase {
     private static final Logger LOGGER = Logger.getLogger(PurchaseImpl.class.getName());
 
     public String getId() {
-        return BillingIntegrationServicesImpl.ID;
+        return BillingIntegrationServicesImpl.devID;
     }
 
     public boolean getConsumed() {

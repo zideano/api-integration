@@ -3,7 +3,10 @@ package rest.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexionmobile.codingchallenge.integration.Integration;
 import com.flexionmobile.codingchallenge.integration.Purchase;
+import rest.enums.HttpResponseCode;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -19,12 +22,13 @@ public class BillingIntegrationServicesImpl implements Integration {
     private static final String POST = "POST";
     private static final String GET = "GET";
     private URL url;
+    private HttpURLConnection connection;
 
     private String webAddress = "http://sandbox.flexionmobile.com/javachallenge/rest/developer/";
 
     public static boolean isConsumed = false;
-    public static String ID = null;
-    public static String itemId = null;
+    public static String devID;
+    public static String itemId;
 
     private Purchase purchase;
     private List<Purchase> purchaseList;
@@ -36,35 +40,45 @@ public class BillingIntegrationServicesImpl implements Integration {
     }
 
     public Purchase buy(String s) {
+        itemId = s;
+
         try {
 
             // Get a connection object and set default resource parameters
-            url = new URL(webAddress);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            url = new URL(webAddress + devID + "/" + "buy" + "/" + itemId);
+            connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod(POST);
             connection.setRequestProperty("Content-Type", "application/json");
-
-            // Output stream for POSTing data to the REST API
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(1);
-            outputStream.flush();
 
             // Check that a connection have been created
             if (connection.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
                 throw new RuntimeException("Connection failed: " + connection.getResponseCode());
             }
 
-            //
+            if (connection.getResponseCode() == HttpResponseCode.ERROR.getResponse())  {
+                LOGGER.log(Level.INFO, connection.getResponseMessage());
+            } else if (connection.getResponseCode() == HttpResponseCode.SUCCESS.getResponse()) {
+                LOGGER.info("Connection successful: " + connection.getResponseCode());
+            }
 
+            // Return json payload from REST API
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
 
-            //  Disconnect
+            String result;
+            LOGGER.info("Reading data from server " + connection.getURL());
+
+            while ((result = bufferedReader.readLine()) != null) {
+                System.out.println(result);
+            }
+            //  Disconnect???
             connection.disconnect();
         } catch (MalformedURLException e) {
             LOGGER.log(Level.SEVERE,"URL address format incorrect.");
             e.printStackTrace();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed HTTPS connection.");
+            LOGGER.log(Level.SEVERE, "Failed HTTP connection.");
             e.printStackTrace();
         }
 
@@ -74,11 +88,84 @@ public class BillingIntegrationServicesImpl implements Integration {
     public List<Purchase> getPurchases() {
         // Read all purchases and return a list of purchases
 
+        try {
+
+            // Get a connection object and set default resource parameters
+            url = new URL(webAddress + devID + "/" + "all");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod(GET);
+            connection.setRequestProperty("Accept", "application/json");
+
+            // Output stream for POSTing data to the REST API
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(1);
+            outputStream.flush();
+
+            // Check that a connection have been created
+            if (connection.getResponseCode() != HttpResponseCode.SUCCESS.getResponse()) {
+                throw new RuntimeException("Connection failed: " + connection.getResponseCode());
+            }
+
+            if (connection.getResponseCode() == HttpResponseCode.ERROR.getResponse())  {
+                LOGGER.log(Level.INFO, connection.getResponseMessage());
+            }
+
+            // Return json payload from REST API
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+
+            String result;
+            LOGGER.info("Reading data from server " + connection.getURL());
+
+            while ((result = bufferedReader.readLine()) != null) {
+                System.out.println(result);
+                //purchaseList.add(result);
+            }
+            //  Disconnect???
+            connection.disconnect();
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.SEVERE,"URL address format incorrect.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed HTTP connection.");
+            e.printStackTrace();
+        }
+
+
         return purchaseList;
     }
 
     public void consume(Purchase purchase) {
+        itemId = purchase.getItemId();
+        try {
+            // Get a connection object and set default resource parameters
+            url = new URL(webAddress + devID + "/" + "consume" + "/" + purchase.getId());
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod(POST);
+            connection.setRequestProperty("Content-Type", "application/json");
 
-        purchaseList.add(purchase);
+            // Check that a connection have been created
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
+                throw new RuntimeException("Connection failed: " + connection.getResponseCode());
+            }
+
+            if (connection.getResponseCode() == HttpResponseCode.ERROR.getResponse())  {
+                LOGGER.log(Level.INFO, connection.getResponseMessage());
+            } else if (connection.getResponseCode() == HttpResponseCode.SUCCESS.getResponse()) {
+                LOGGER.info("Connection successful: " + connection.getResponseCode());
+                isConsumed = true;
+            }
+
+            //  Disconnect???
+            connection.disconnect();
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.SEVERE,"URL address format incorrect.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed HTTP connection.");
+            e.printStackTrace();
+        }
     }
 }
