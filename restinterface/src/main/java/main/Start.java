@@ -2,14 +2,10 @@ package main;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexionmobile.codingchallenge.integration.Purchase;
-import org.w3c.dom.stylesheets.LinkStyle;
 import rest.pojo.Buy;
 import rest.pojo.Consume;
 import rest.pojo.GetPurchases;
 import rest.services.impl.BillingIntegrationServicesImpl;
-import rest.services.impl.PurchaseImpl;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -45,13 +41,26 @@ public class Start {
 
         LOGGER.info("Inside main...");
 
-        purchase = integrationServices.buy(itemId);
-        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+        // Buy some items and consume them
+//        purchase = integrationServices.buy(itemId);
+//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+//        integrationServices.consume(purchase);
+//        consume.setPurchaseId(purchase.getId());
+//        System.out.println("Consuming a single purchase...");
+//
+//        purchase = integrationServices.buy("emerald");
+//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+//        integrationServices.consume(purchase);
+//        consume.setPurchaseId(purchase.getId());
+//        System.out.println("Consuming a single purchase...");
+//
+//        purchase = integrationServices.buy("potion");
+//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+//        integrationServices.consume(purchase);
+//        consume.setPurchaseId(purchase.getId());
+//        System.out.println("Consuming a single purchase...");
 
-        integrationServices.consume(purchase);
-        consume.setPurchaseId(purchase.getId());
-        System.out.println("Consuming a single purchase...");
-
+        // Get all purchases made
         purchaseList = integrationServices.getPurchases();
         System.out.println("Returning a list of all purchases made on the network...");
         System.out.println(purchaseList);
