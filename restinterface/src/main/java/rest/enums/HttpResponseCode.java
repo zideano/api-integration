@@ -4,13 +4,13 @@ public enum HttpResponseCode {
     SUCCESS(200),
     ERROR(404);
 
-    private Integer response;
+    private int response;
 
-    HttpResponseCode(Integer response) {
+    HttpResponseCode(int response) {
         this.response = response;
     }
 
-    public Integer getResponse() {
+    public int getResponse() {
         return response;
     }
 }
