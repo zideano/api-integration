@@ -3,6 +3,8 @@ package rest.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexionmobile.codingchallenge.integration.Integration;
 import com.flexionmobile.codingchallenge.integration.Purchase;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import rest.enums.HttpResponseCode;
 import rest.pojo.Purchases;
 
@@ -26,22 +28,23 @@ public class BillingIntegrationServicesImpl implements Integration {
     private HttpURLConnection connection;
 
     private String webAddress = "http://sandbox.flexionmobile.com/javachallenge/rest/developer/";
-
-    private boolean isConsumed;
     private static String devID = "jermaine";
     private static String itemId;
 
     private PurchaseImpl purchase;
-    private Purchases purchases;
+    private Purchase purchases;
     private List<Purchase> purchaseList;
     private ObjectMapper objectMapper;
 
     public BillingIntegrationServicesImpl(ObjectMapper objectMapper) {
+        /*
+            The object mapper is used to serialize and deserialize
+            POJOs -> JSON & JSON -> POJOs
+        */
         this.objectMapper = objectMapper;
-        this.purchaseList = new ArrayList<Purchase>();
-        isConsumed = false;
+
+        this.purchaseList = new ArrayList<>();
         purchase = new PurchaseImpl();
-        purchases= new Purchases();
     }
 
     public Purchase buy(String s) {
@@ -90,6 +93,10 @@ public class BillingIntegrationServicesImpl implements Integration {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception thrown: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
 
         return purchase;
@@ -105,7 +112,7 @@ public class BillingIntegrationServicesImpl implements Integration {
             connection.setRequestMethod(GET);
             connection.setRequestProperty("Accept", "application/json");
 
-            // Check that a connection have been created
+            // Check that a connection have been created else throw exception
             if (connection.getResponseCode() != HttpResponseCode.SUCCESS.getResponse()) {
                 throw new RuntimeException("Connection failed: " + connection.getResponseCode());
             } else if (connection.getResponseCode() == HttpResponseCode.ERROR.getResponse())  {
@@ -120,9 +127,19 @@ public class BillingIntegrationServicesImpl implements Integration {
             LOGGER.info("Reading data from server [GET]: " + connection.getURL());
 
             while ((result = bufferedReader.readLine()) != null) {
-                System.out.println(result);
 
-                purchases = objectMapper.readValue(result, Purchases.class);
+                /*
+                    REST API may return multiple purchases in the form of a JSONArray
+                    So unpack into JSONObject
+                */
+                JSONObject object = new JSONObject(result);
+                JSONArray jsonArray = object.getJSONArray("purchases");
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    System.out.println(jsonArray.getJSONObject(i));
+                    purchase = objectMapper.readValue(jsonArray.getJSONObject(i).toString(), PurchaseImpl.class);
+                    purchaseList.add(purchase);
+                }
             }
 
             //  Disconnect???
@@ -133,6 +150,10 @@ public class BillingIntegrationServicesImpl implements Integration {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception thrown: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
 
         return purchaseList;
@@ -171,6 +192,10 @@ public class BillingIntegrationServicesImpl implements Integration {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception thrown: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 }

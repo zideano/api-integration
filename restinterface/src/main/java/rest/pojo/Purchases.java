@@ -1,15 +1,15 @@
 package rest.pojo;
 
-import java.util.List;
+import java.util.Map;
 
 public class Purchases {
-    private String purchases;
+    private Map<String, String> purchases;
 
-    public String getPurchases() {
+    public Map<String, String> getPurchases() {
         return purchases;
     }
 
-    public void setPurchases(String purchases) {
+    public void setPurchases(Map<String, String> purchases) {
         this.purchases = purchases;
     }
 }

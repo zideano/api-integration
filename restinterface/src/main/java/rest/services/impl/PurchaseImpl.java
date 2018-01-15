@@ -34,4 +34,13 @@ public class PurchaseImpl implements Purchase {
     public String getItemId() {
         return itemId;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "consumed='" + consumed + '\'' +
+                ", itemId=" + itemId +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }
