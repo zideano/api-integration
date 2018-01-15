@@ -42,27 +42,24 @@ public class Start {
         LOGGER.info("Inside main...");
 
         // Buy some items and consume them
-//        purchase = integrationServices.buy(itemId);
-//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
-//        integrationServices.consume(purchase);
-//        consume.setPurchaseId(purchase.getId());
-//        System.out.println("Consuming a single purchase...");
-//
-//        purchase = integrationServices.buy("emerald");
-//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
-//        integrationServices.consume(purchase);
-//        consume.setPurchaseId(purchase.getId());
-//        System.out.println("Consuming a single purchase...");
-//
-//        purchase = integrationServices.buy("potion");
-//        System.out.println("Purchase ID from buy operation: " + purchase.getId());
-//        integrationServices.consume(purchase);
-//        consume.setPurchaseId(purchase.getId());
-//        System.out.println("Consuming a single purchase...");
+        purchase = integrationServices.buy("shield");
+        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+        integrationServices.consume(purchase);
+        consume.setPurchaseId(purchase.getId());
+        System.out.println("Consuming a single purchase...");
+
+        purchase = integrationServices.buy("emerald");
+        System.out.println("Purchase ID from buy operation: " + purchase.getId());
+        integrationServices.consume(purchase);
+        consume.setPurchaseId(purchase.getId());
+        System.out.println("Consuming a single purchase...");
 
         // Get all purchases made
         purchaseList = integrationServices.getPurchases();
         System.out.println("Returning a list of all purchases made on the network...");
-        System.out.println(purchaseList);
+
+        for (Purchase purchase1 : purchaseList) {
+            System.out.println(purchase1);
+        }
     }
 }
