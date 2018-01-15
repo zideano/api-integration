@@ -1,8 +1,9 @@
 package rest.pojo;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Purchases {
+public class Purchases implements Serializable {
     private Map<String, String> purchases;
 
     public Map<String, String> getPurchases() {
